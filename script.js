@@ -57,36 +57,4 @@ const choicesEl = document.getElementById("choices");
 
 function getRandomWord() {
   return vocab[Math.floor(Math.random() * vocab.length)];
-}
 
-function generateChoices(correctMeaning) {
-  const meanings = vocab.map(v => v.meaning).filter(m => m !== correctMeaning);
-  const shuffled = meanings.sort(() => 0.5 - Math.random()).slice(0, 3);
-  const all = [...shuffled, correctMeaning].sort(() => 0.5 - Math.random());
-  return all;
-}
-
-function loadQuestion() {
-  const current = getRandomWord();
-  wordEl.textContent = current.word;
-  romajiEl.textContent = current.romaji;
-
-  const choices = generateChoices(current.meaning);
-  choicesEl.innerHTML = "";
-
-  choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-    btn.onclick = () => {
-      if (choice === current.meaning) {
-        btn.classList.add("correct");
-      } else {
-        btn.classList.add("wrong");
-      }
-      setTimeout(loadQuestion, 1000);
-    };
-    choicesEl.appendChild(btn);
-  });
-}
-
-loadQuestion();
