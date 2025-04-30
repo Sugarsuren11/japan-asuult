@@ -25,7 +25,13 @@ body {
 .card p {
   font-size: 1.2em;
   color: #666;
-  margin: 10px 0 0;
+  margin: 10px 0;
+}
+
+#score {
+  font-size: 1.3em;
+  color: #333;
+  margin-top: 15px;
 }
 
 .choices {
