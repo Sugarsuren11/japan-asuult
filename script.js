@@ -56,11 +56,13 @@ const mode1Btn = document.getElementById("mode1");
 const mode2Btn = document.getElementById("mode2");
 
 let score = 0;
-let currentMode = "mode1"; // Анхны формат: Япон → Монгол
+let currentMode = "mode1";
 
 function updateScore(correct) {
   if (correct) {
-    score += 10;
+    score += 1; // Зөв хариулт бүрт 1 оноо нэмнэ
+  } else {
+    score = Math.max(0, score - 1); // Буруу хариулт бүрт 1 оноо хасна, гэхдээ 0-ээс доош унахгүй
   }
   scoreEl.textContent = `Оноо: ${score}`;
 }
@@ -115,13 +117,13 @@ function displayQuestion() {
   } else {
     // Формат 2: Асуулт монгол утгаар, хариулт япон бичиг, галигтай
     wordEl.textContent = currentWord.meaning;
-    romajiEl.textContent = ""; // Роможи хэрэггүй
+    romajiEl.textContent = "";
 
     choicesEl.innerHTML = "";
     const options = [currentWord];
     while (options.length < 4) {
       const randomWord = getRandomWord();
-      if (!options.some(opt => opt.word === randomWord.word) && randomWord.word !== currentWord.word) {
+      if (!options.some(opt => opt.word === randomWord.word)) {
         options.push(randomWord);
       }
     }
@@ -129,10 +131,11 @@ function displayQuestion() {
     options.forEach(option => {
       const button = document.createElement("button");
       button.textContent = `${option.word} (${option.romaji})`;
+      button.dataset.word = option.word; // Зөв хариултыг шалгахад хэрэгтэй
       button.addEventListener("click", () => {
         choicesEl.querySelectorAll("button").forEach(btn => {
           btn.disabled = true;
-          if (btn.textContent === `${currentWord.word} (${currentWord.romaji})`) {
+          if (btn.dataset.word === currentWord.word) {
             btn.classList.add("correct");
           }
         });
@@ -159,7 +162,7 @@ function setMode(mode) {
   currentMode = mode;
   mode1Btn.classList.toggle("active", mode === "mode1");
   mode2Btn.classList.toggle("active", mode === "mode2");
-  displayQuestion(); // Форматыг өөрчлөхдөө асуултыг шинэчлэх
+  displayQuestion();
 }
 
 mode1Btn.addEventListener("click", () => setMode("mode1"));
