@@ -52,8 +52,11 @@ const wordEl = document.getElementById("word");
 const romajiEl = document.getElementById("romaji");
 const choicesEl = document.getElementById("choices");
 const scoreEl = document.getElementById("score");
+const mode1Btn = document.getElementById("mode1");
+const mode2Btn = document.getElementById("mode2");
 
 let score = 0;
+let currentMode = "mode1"; // Анхны формат: Япон → Монгол
 
 function updateScore(correct) {
   if (correct) {
@@ -68,45 +71,99 @@ function getRandomWord() {
 
 function displayQuestion() {
   const currentWord = getRandomWord();
-  wordEl.textContent = currentWord.word; // Асуулт япон үсгээр
-  romajiEl.textContent = currentWord.romaji; // Роможи
+  
+  if (currentMode === "mode1") {
+    // Формат 1: Асуулт япон бичиг, галигтай, хариулт монгол утгаар
+    wordEl.textContent = currentWord.word;
+    romajiEl.textContent = currentWord.romaji;
 
-  choicesEl.innerHTML = ""; // Өмнөх сонголтуудыг цэвэрлэх
-  const options = [currentWord.meaning];
-  while (options.length < 4) {
-    const randomWord = getRandomWord();
-    if (!options.includes(randomWord.meaning) && randomWord.meaning !== currentWord.meaning) {
-      options.push(randomWord.meaning); // Хариулт галигаар (монгол утга)
-    }
-  }
-  options.sort(() => Math.random() - 0.5);
-  options.forEach(option => {
-    const button = document.createElement("button");
-    button.textContent = option;
-    button.addEventListener("click", () => {
-      choicesEl.querySelectorAll("button").forEach(btn => {
-        btn.disabled = true;
-        if (btn.textContent === currentWord.meaning) {
-          btn.classList.add("correct"); // Зөв хариултыг ногоон өнгөөр тодруулах
-        }
-      });
-      if (option === currentWord.meaning) {
-        button.classList.add("correct");
-        updateScore(true);
-      } else {
-        button.classList.add("wrong");
-        updateScore(false);
+    choicesEl.innerHTML = "";
+    const options = [currentWord.meaning];
+    while (options.length < 4) {
+      const randomWord = getRandomWord();
+      if (!options.includes(randomWord.meaning) && randomWord.meaning !== currentWord.meaning) {
+        options.push(randomWord.meaning);
       }
-      setTimeout(() => {
+    }
+    options.sort(() => Math.random() - 0.5);
+    options.forEach(option => {
+      const button = document.createElement("button");
+      button.textContent = option;
+      button.addEventListener("click", () => {
         choicesEl.querySelectorAll("button").forEach(btn => {
-          btn.classList.remove("correct", "wrong"); // Тодруулалтыг арилгах
+          btn.disabled = true;
+          if (btn.textContent === currentWord.meaning) {
+            btn.classList.add("correct");
+          }
         });
-        displayQuestion();
-      }, 1500);
+        if (option === currentWord.meaning) {
+          button.classList.add("correct");
+          updateScore(true);
+        } else {
+          button.classList.add("wrong");
+          updateScore(false);
+        }
+        setTimeout(() => {
+          choicesEl.querySelectorAll("button").forEach(btn => {
+            btn.classList.remove("correct", "wrong");
+          });
+          displayQuestion();
+        }, 1500);
+      });
+      choicesEl.appendChild(button);
     });
-    choicesEl.appendChild(button);
-  });
+  } else {
+    // Формат 2: Асуулт монгол утгаар, хариулт япон бичиг, галигтай
+    wordEl.textContent = currentWord.meaning;
+    romajiEl.textContent = ""; // Роможи хэрэггүй
+
+    choicesEl.innerHTML = "";
+    const options = [currentWord];
+    while (options.length < 4) {
+      const randomWord = getRandomWord();
+      if (!options.some(opt => opt.word === randomWord.word) && randomWord.word !== currentWord.word) {
+        options.push(randomWord);
+      }
+    }
+    options.sort(() => Math.random() - 0.5);
+    options.forEach(option => {
+      const button = document.createElement("button");
+      button.textContent = `${option.word} (${option.romaji})`;
+      button.addEventListener("click", () => {
+        choicesEl.querySelectorAll("button").forEach(btn => {
+          btn.disabled = true;
+          if (btn.textContent === `${currentWord.word} (${currentWord.romaji})`) {
+            btn.classList.add("correct");
+          }
+        });
+        if (option.word === currentWord.word) {
+          button.classList.add("correct");
+          updateScore(true);
+        } else {
+          button.classList.add("wrong");
+          updateScore(false);
+        }
+        setTimeout(() => {
+          choicesEl.querySelectorAll("button").forEach(btn => {
+            btn.classList.remove("correct", "wrong");
+          });
+          displayQuestion();
+        }, 1500);
+      });
+      choicesEl.appendChild(button);
+    });
+  }
 }
+
+function setMode(mode) {
+  currentMode = mode;
+  mode1Btn.classList.toggle("active", mode === "mode1");
+  mode2Btn.classList.toggle("active", mode === "mode2");
+  displayQuestion(); // Форматыг өөрчлөхдөө асуултыг шинэчлэх
+}
+
+mode1Btn.addEventListener("click", () => setMode("mode1"));
+mode2Btn.addEventListener("click", () => setMode("mode2"));
 
 document.addEventListener("DOMContentLoaded", () => {
   updateScore(false);
