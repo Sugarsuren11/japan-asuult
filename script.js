@@ -40,13 +40,12 @@ const vocab = [
   { word: "ちがいます", romaji: "chigaimasu", meaning: "биш, андуурсан байна" },
   { word: "そうですか", romaji: "sou desu ka", meaning: "тийм үү?" },
   { word: "あのう", romaji: "anou", meaning: "ээ…" },
-  { word: "ほんのきもちです", romaji: "hon no kimochi desu", meaning: "Жаахан юм" },
-  { word: "どうぞ", romaji: "douzo", meaning: "Тэг тэг, май" },
-  { word: "どうも", romaji: "doumo", meaning: "Баярлалаа" },
-  { word: "これからおせわになります", romaji: "kore kara osewa ni narimasu", meaning: "Дэмжлэгээ хүсье" },
-  { word: "（どうも）ありがとう ございます", romaji: "doumo arigatou gozaimasu", meaning: "Маш их баярлалаа" },
-  { word: "ありがとう（ございます）", romaji: "arigatou (gozaimasu)", meaning: "баярлалаа" },
-  { word: "こちらこそよろしく", romaji: "kochira koso yoroshiku", meaning: "Би ч гэсэн танилцсандаа таатай байна" }
+  { word: "ほんのきもちです", romaji: "hon no kimochi desu", meaning: "жаахан юм" },
+  { word: "どうぞ", romaji: "douzo", meaning: "тэг тэг, май" },
+  { word: "どうも", romaji: "doumo", meaning: "баярлалаа" },
+  { word: "これからおせわになります", romaji: "kore kara osewa ni narimasu", meaning: "дэмжлэгээ хүсье" },
+  { word: "（どうも）ありがとう ございます", romaji: "doumo arigatou gozaimasu", meaning: "маш их баярлалаа" },
+  { word: "こちらこそよろしく", romaji: "kochira koso yoroshiku", meaning: "би ч гэсэн танилцсандаа таатай байна" }
 ];
 
 const wordEl = document.getElementById("word");
@@ -59,14 +58,14 @@ function getRandomWord() {
 
 function displayQuestion() {
   const currentWord = getRandomWord();
-  wordEl.textContent = currentWord.word;
-  romajiEl.textContent = currentWord.romaji;
+  wordEl.textContent = currentWord.word; // Япон үсэг (жишээ нь: これ)
+  romajiEl.textContent = currentWord.romaji; // Роможи (жишээ нь: kore)
 
   choicesEl.innerHTML = "";
   const options = [currentWord.meaning];
   while (options.length < 4) {
     const randomWord = getRandomWord();
-    if (!options.includes(randomWord.meaning)) {
+    if (!options.includes(randomWord.meaning) && randomWord.meaning !== currentWord.meaning) {
       options.push(randomWord.meaning);
     }
   }
@@ -75,12 +74,18 @@ function displayQuestion() {
     const button = document.createElement("button");
     button.textContent = option;
     button.addEventListener("click", () => {
+      choicesEl.querySelectorAll("button").forEach(btn => {
+        btn.disabled = true; // Бүх товчнуудыг идэвхгүй болгох
+        if (btn.textContent === currentWord.meaning) {
+          btn.classList.add("correct"); // Зөв хариултыг тодруулах
+        }
+      });
       if (option === currentWord.meaning) {
         button.classList.add("correct");
       } else {
         button.classList.add("wrong");
       }
-      setTimeout(displayQuestion, 1000); // Дараагийн асуулт руу шилжих
+      setTimeout(displayQuestion, 1500); // 1.5 секунд хүлээгээд дараагийн асуулт
     });
     choicesEl.appendChild(button);
   });
