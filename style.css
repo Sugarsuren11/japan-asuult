@@ -5,11 +5,9 @@ body {
   padding: 40px;
   margin: 0;
 }
-
 .mode-selection {
   margin-bottom: 20px;
 }
-
 .mode-btn {
   padding: 10px 20px;
   font-size: 1em;
@@ -20,16 +18,13 @@ body {
   margin: 0 10px;
   transition: background 0.3s ease;
 }
-
 .mode-btn:hover {
   background: #d0d0d0;
 }
-
 .mode-btn.active {
   background: #4a90e2;
   color: white;
 }
-
 .card {
   display: inline-block;
   background: white;
@@ -39,25 +34,24 @@ body {
   margin-bottom: 30px;
   min-width: 300px;
 }
-
 .card h1 {
   font-size: 2.5em;
   margin: 0;
   color: #333;
 }
-
 .card p {
   font-size: 1.2em;
   color: #666;
   margin: 10px 0;
 }
-
+.hidden {
+  display: none;
+}
 #score {
   font-size: 1.3em;
   color: #333;
   margin-top: 15px;
 }
-
 .choices {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -65,7 +59,6 @@ body {
   max-width: 400px;
   margin: auto;
 }
-
 button {
   padding: 12px 20px;
   font-size: 1.1em;
@@ -75,20 +68,16 @@ button {
   cursor: pointer;
   transition: background 0.3s ease;
 }
-
 button:hover {
   background: #d0d0d0;
 }
-
 button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
-
 .correct {
   background-color: #a5d6a7 !important;
 }
-
 .wrong {
   background-color: #ef9a9a !important;
 }
