@@ -88,32 +88,4 @@ function displayQuestion() {
   const currentWord = getRandomWord();
   
   if (currentMode === "mode1") {
-    // Формат 1: Асуулт япон бичиг, хариулт монгол утгаар
-    wordEl.textContent = currentWord.word;
-    romajiEl.textContent = ""; // Hide romaji
-
-    choicesEl.innerHTML = "";
-    const options = [currentWord.meaning];
-    while (options.length < 4) {
-      const randomWord = getRandomWord();
-      if (!options.includes(randomWord.meaning) && randomWord.meaning !== currentWord.meaning) {
-        options.push(randomWord.meaning);
-      }
-    }
-    options.sort(() => Math.random() - 0.5);
-    options.forEach(option => {
-      const button = document.createElement("button");
-      button.textContent = option;
-      button.addEventListener("click", () => {
-        choicesEl.querySelectorAll("button").forEach(btn => {
-          btn.disabled = true;
-          if (btn.textContent === currentWord.meaning) {
-            btn.classList.add("correct");
-          }
-        });
-        if (option === currentWord.meaning) {
-          button.classList.add("correct");
-          updateScore(true);
-        } else {
-          button.classList.add("wrong");
-          updateScore(false);
+    // Фор
