@@ -49,11 +49,43 @@ const vocab = [
   { word: "こちらこそよろしく", romaji: "kochira koso yoroshiku", meaning: "Би ч гэсэн танилцсандаа таатай байна" }
 ];
 
-
 const wordEl = document.getElementById("word");
 const romajiEl = document.getElementById("romaji");
 const choicesEl = document.getElementById("choices");
 
 function getRandomWord() {
   return vocab[Math.floor(Math.random() * vocab.length)];
+}
 
+function displayQuestion() {
+  const currentWord = getRandomWord();
+  wordEl.textContent = currentWord.word;
+  romajiEl.textContent = currentWord.romaji;
+
+  choicesEl.innerHTML = "";
+  const options = [currentWord.meaning];
+  while (options.length < 4) {
+    const randomWord = getRandomWord();
+    if (!options.includes(randomWord.meaning)) {
+      options.push(randomWord.meaning);
+    }
+  }
+  options.sort(() => Math.random() - 0.5);
+  options.forEach(option => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.addEventListener("click", () => {
+      if (option === currentWord.meaning) {
+        button.classList.add("correct");
+      } else {
+        button.classList.add("wrong");
+      }
+      setTimeout(displayQuestion, 1000); // Дараагийн асуулт руу шилжих
+    });
+    choicesEl.appendChild(button);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  displayQuestion();
+});
