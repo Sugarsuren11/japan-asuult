@@ -88,9 +88,9 @@ function displayQuestion() {
   const currentWord = getRandomWord();
   
   if (currentMode === "mode1") {
-    // Формат 1: Асуулт япон бичиг, галигтай, хариулт монгол утгаар
+    // Формат 1: Асуулт япон бичиг, хариулт монгол утгаар
     wordEl.textContent = currentWord.word;
-    romajiEl.textContent = currentWord.romaji;
+    romajiEl.textContent = ""; // Hide romaji
 
     choicesEl.innerHTML = "";
     const options = [currentWord.meaning];
@@ -117,72 +117,3 @@ function displayQuestion() {
         } else {
           button.classList.add("wrong");
           updateScore(false);
-        }
-        setTimeout(() => {
-          choicesEl.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("correct", "wrong");
-          });
-          displayQuestion();
-        }, 1500);
-      });
-      choicesEl.appendChild(button);
-    });
-  } else {
-    // Формат 2: Асуулт монгол утгаар, хариулт япон бичиг, галигтай
-    wordEl.textContent = currentWord.meaning;
-    romajiEl.textContent = "";
-
-    choicesEl.innerHTML = "";
-    const options = [currentWord];
-    while (options.length < 4) {
-      const randomWord = getRandomWord();
-      if (!options.some(opt => opt.word === randomWord.word)) {
-        options.push(randomWord);
-      }
-    }
-    options.sort(() => Math.random() - 0.5);
-    options.forEach(option => {
-      const button = document.createElement("button");
-      button.textContent = `${option.word} (${option.romaji})`;
-      button.dataset.word = option.word;
-      button.addEventListener("click", () => {
-        choicesEl.querySelectorAll("button").forEach(btn => {
-          btn.disabled = true;
-          if (btn.dataset.word === currentWord.word) {
-            btn.classList.add("correct");
-          }
-        });
-        if (option.word === currentWord.word) {
-          button.classList.add("correct");
-          updateScore(true);
-        } else {
-          button.classList.add("wrong");
-          updateScore(false);
-        }
-        setTimeout(() => {
-          choicesEl.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("correct", "wrong");
-          });
-          displayQuestion();
-        }, 1500);
-      });
-      choicesEl.appendChild(button);
-    });
-  }
-}
-
-function setMode(mode) {
-  currentMode = mode;
-  mode1Btn.classList.toggle("active", mode === "mode1");
-  mode2Btn.classList.toggle("active", mode === "mode2");
-  wordHistory = [];
-  displayQuestion();
-}
-
-mode1Btn.addEventListener("click", () => setMode("mode1"));
-mode2Btn.addEventListener("click", () => setMode("mode2"));
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateScore(false);
-  displayQuestion();
-});
