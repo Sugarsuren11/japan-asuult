@@ -51,6 +51,16 @@ const vocab = [
 const wordEl = document.getElementById("word");
 const romajiEl = document.getElementById("romaji");
 const choicesEl = document.getElementById("choices");
+const scoreEl = document.getElementById("score");
+
+let score = 0;
+
+function updateScore(correct) {
+  if (correct) {
+    score += 10;
+  }
+  scoreEl.textContent = `Оноо: ${score}`;
+}
 
 function getRandomWord() {
   return vocab[Math.floor(Math.random() * vocab.length)];
@@ -58,15 +68,15 @@ function getRandomWord() {
 
 function displayQuestion() {
   const currentWord = getRandomWord();
-  wordEl.textContent = currentWord.word; // Япон үсэг (жишээ нь: これ)
-  romajiEl.textContent = currentWord.romaji; // Роможи (жишээ нь: kore)
+  wordEl.textContent = currentWord.word; // Асуулт япон үсгээр
+  romajiEl.textContent = currentWord.romaji; // Роможи
 
-  choicesEl.innerHTML = "";
+  choicesEl.innerHTML = ""; // Өмнөх сонголтуудыг цэвэрлэх
   const options = [currentWord.meaning];
   while (options.length < 4) {
     const randomWord = getRandomWord();
     if (!options.includes(randomWord.meaning) && randomWord.meaning !== currentWord.meaning) {
-      options.push(randomWord.meaning);
+      options.push(randomWord.meaning); // Хариулт галигаар (монгол утга)
     }
   }
   options.sort(() => Math.random() - 0.5);
@@ -75,22 +85,30 @@ function displayQuestion() {
     button.textContent = option;
     button.addEventListener("click", () => {
       choicesEl.querySelectorAll("button").forEach(btn => {
-        btn.disabled = true; // Бүх товчнуудыг идэвхгүй болгох
+        btn.disabled = true;
         if (btn.textContent === currentWord.meaning) {
-          btn.classList.add("correct"); // Зөв хариултыг тодруулах
+          btn.classList.add("correct"); // Зөв хариултыг ногоон өнгөөр тодруулах
         }
       });
       if (option === currentWord.meaning) {
         button.classList.add("correct");
+        updateScore(true);
       } else {
         button.classList.add("wrong");
+        updateScore(false);
       }
-      setTimeout(displayQuestion, 1500); // 1.5 секунд хүлээгээд дараагийн асуулт
+      setTimeout(() => {
+        choicesEl.querySelectorAll("button").forEach(btn => {
+          btn.classList.remove("correct", "wrong"); // Тодруулалтыг арилгах
+        });
+        displayQuestion();
+      }, 1500);
     });
     choicesEl.appendChild(button);
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  updateScore(false);
   displayQuestion();
 });
