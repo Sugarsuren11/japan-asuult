@@ -87,5 +87,4 @@ function getRandomWord() {
 function displayQuestion() {
   const currentWord = getRandomWord();
   
-  if (currentMode === "mode1") {
-    // Фор
+  if (currentMode === "mode1") 
