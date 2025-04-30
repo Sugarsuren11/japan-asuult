@@ -57,7 +57,7 @@ const mode2Btn = document.getElementById("mode2");
 
 let score = 0;
 let currentMode = "mode1";
-let wordHistory = []; // Асуултын түүхийг хадгалах
+let wordHistory = [];
 
 function updateScore(correct) {
   if (correct) {
@@ -71,11 +71,11 @@ function updateScore(correct) {
 function getRandomWord() {
   let availableWords = vocab.filter(word => {
     const wordCount = wordHistory.filter(w => w.word === word.word).length;
-    return wordCount < 2; // Нэг үг 2-оос дээш давтагдахгүй
+    return wordCount < 2;
   });
 
   if (availableWords.length === 0) {
-    wordHistory = []; // Бүх үг 2 удаа давтагдсан бол түүхийг цэвэрлэх
+    wordHistory = [];
     availableWords = vocab;
   }
 
@@ -175,7 +175,7 @@ function setMode(mode) {
   currentMode = mode;
   mode1Btn.classList.toggle("active", mode === "mode1");
   mode2Btn.classList.toggle("active", mode === "mode2");
-  wordHistory = []; // Форматыг өөрчлөхдөө түүхийг шинэчлэх
+  wordHistory = [];
   displayQuestion();
 }
 
