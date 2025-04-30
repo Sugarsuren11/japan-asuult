@@ -49,7 +49,6 @@ const vocab = [
   { word: "こちらこそよろしく", romaji: "kochira koso yoroshiku", meaning: "Би ч гэсэн танилцсандаа таатай байна" }
 ];
 
-];
 
 const wordEl = document.getElementById("word");
 const romajiEl = document.getElementById("romaji");
