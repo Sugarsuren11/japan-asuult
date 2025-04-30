@@ -49,7 +49,6 @@ const vocab = [
 ];
 
 const wordEl = document.getElementById("word");
-const romajiEl = document.getElementById("romaji");
 const choicesEl = document.getElementById("choices");
 const scoreEl = document.getElementById("score");
 const mode1Btn = document.getElementById("mode1");
@@ -61,9 +60,9 @@ let wordHistory = [];
 
 function updateScore(correct) {
   if (correct) {
-    score += 1; // Зөв хариулт бүрт 1 оноо нэмнэ
+    score += 1;
   } else {
-    score = Math.max(0, score - 1); // Буруу хариулт бүрт 1 оноо хасна, 0-ээс доош унахгүй
+    score = Math.max(0, score - 1);
   }
   scoreEl.textContent = `Оноо: ${score}`;
 }
@@ -87,4 +86,125 @@ function getRandomWord() {
 function displayQuestion() {
   const currentWord = getRandomWord();
   
-  if (currentMode === "mode1") 
+  if (currentMode === "mode1") {
+    // Mode 1: Японы галигийг харуулж, Монгол утгыг сонгуулна
+    wordEl.textContent = currentWord.word;
+    
+    // Сонголтууд: Монгол утгууд
+    choicesEl.innerHTML = "";
+    const correctAnswer = currentWord.meaning;
+    const allAnswers = [correctAnswer];
+    
+    // 3 буруу Монгол утга сонгох
+    while (allAnswers.length < 4) {
+      const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
+      if (!allAnswers.includes(randomWord.meaning)) {
+        allAnswers.push(randomWord.meaning);
+      }
+    }
+    
+    // Сонголтуудыг холино
+    allAnswers.sort(() => Math.random() - 0.5);
+    
+    // Сонголтуудыг HTML-д нэмнэ
+    allAnswers.forEach(answer => {
+      const button = document.createElement("button");
+      button.textContent = answer;
+      button.addEventListener("click", () => {
+        // Бүх товчлуурыг идэвхгүй болгоно
+        const buttons = choicesEl.querySelectorAll("button");
+        buttons.forEach(btn => btn.disabled = true);
+        
+        // Зөв эсвэл бурууг харуулах
+        if (answer === correctAnswer) {
+          button.classList.add("correct");
+          updateScore(true);
+          setTimeout(displayQuestion, 1000); // 1 секундын дараа дараагийн асуулт
+        } else {
+          button.classList.add("wrong");
+          updateScore(false);
+          // Зөв хариултыг тодруулах
+          buttons.forEach(btn => {
+            if (btn.textContent === correctAnswer) {
+              btn.classList.add("correct");
+            }
+          });
+          setTimeout(() => {
+            buttons.forEach(btn => btn.disabled = false); // Товчлуурыг буцааж идэвхжүүлнэ
+            buttons.forEach(btn => btn.classList.remove("correct", "wrong")); // Классуудыг арилгана
+          }, 1000);
+        }
+      });
+      choicesEl.appendChild(button);
+    });
+  } else {
+    // Mode 2: Монгол утгыг харуулж, Японы галигийг сонгуулна
+    wordEl.textContent = currentWord.meaning;
+    
+    // Сонголтууд: Японы галигууд
+    choicesEl.innerHTML = "";
+    const correctAnswer = currentWord.word;
+    const allAnswers = [correctAnswer];
+    
+    // 3 буруу Японы галиг сонгох
+    while (allAnswers.length < 4) {
+      const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
+      if (!allAnswers.includes(randomWord.word)) {
+        allAnswers.push(randomWord.word);
+      }
+    }
+    
+    // Сонголтуудыг холино
+    allAnswers.sort(() => Math.random() - 0.5);
+    
+    // Сонголтуудыг HTML-д нэмнэ
+    allAnswers.forEach(answer => {
+      const button = document.createElement("button");
+      button.textContent = answer;
+      button.addEventListener("click", () => {
+        // Бүх товчлуурыг идэвхгүй болгоно
+        const buttons = choicesEl.querySelectorAll("button");
+        buttons.forEach(btn => btn.disabled = true);
+        
+        // Зөв эсвэл бурууг харуулах
+        if (answer === correctAnswer) {
+          button.classList.add("correct");
+          updateScore(true);
+          setTimeout(displayQuestion, 1000); // 1 секундын дараа дараагийн асуулт
+        } else {
+          button.classList.add("wrong");
+          updateScore(false);
+          // Зөв хариултыг тодруулах
+          buttons.forEach(btn => {
+            if (btn.textContent === correctAnswer) {
+              btn.classList.add("correct");
+            }
+          });
+          setTimeout(() => {
+            buttons.forEach(btn => btn.disabled = false); // Товчлуурыг буцааж идэвхжүүлнэ
+            buttons.forEach(btn => btn.classList.remove("correct", "wrong")); // Классуудыг арилгана
+          }, 1000);
+        }
+      });
+      choicesEl.appendChild(button);
+    });
+  }
+}
+
+// Горимын товчлууруудын үйлдэл
+mode1Btn.addEventListener("click", () => {
+  currentMode = "mode1";
+  mode1Btn.classList.add("active");
+  mode2Btn.classList.remove("active");
+  displayQuestion();
+});
+
+mode2Btn.addEventListener("click", () => {
+  currentMode = "mode2";
+  mode2Btn.classList.add("active");
+  mode1Btn.classList.remove("active");
+  displayQuestion();
+});
+
+// Эхний асуултыг харуулах
+displayQuestion();
