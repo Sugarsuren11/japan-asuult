@@ -57,18 +57,31 @@ const mode2Btn = document.getElementById("mode2");
 
 let score = 0;
 let currentMode = "mode1";
+let wordHistory = []; // Асуултын түүхийг хадгалах
 
 function updateScore(correct) {
   if (correct) {
     score += 1; // Зөв хариулт бүрт 1 оноо нэмнэ
   } else {
-    score = Math.max(0, score - 1); // Буруу хариулт бүрт 1 оноо хасна, гэхдээ 0-ээс доош унахгүй
+    score = Math.max(0, score - 1); // Буруу хариулт бүрт 1 оноо хасна, 0-ээс доош унахгүй
   }
   scoreEl.textContent = `Оноо: ${score}`;
 }
 
 function getRandomWord() {
-  return vocab[Math.floor(Math.random() * vocab.length)];
+  let availableWords = vocab.filter(word => {
+    const wordCount = wordHistory.filter(w => w.word === word.word).length;
+    return wordCount < 2; // Нэг үг 2-оос дээш давтагдахгүй
+  });
+
+  if (availableWords.length === 0) {
+    wordHistory = []; // Бүх үг 2 удаа давтагдсан бол түүхийг цэвэрлэх
+    availableWords = vocab;
+  }
+
+  const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+  wordHistory.push(randomWord);
+  return randomWord;
 }
 
 function displayQuestion() {
@@ -131,7 +144,7 @@ function displayQuestion() {
     options.forEach(option => {
       const button = document.createElement("button");
       button.textContent = `${option.word} (${option.romaji})`;
-      button.dataset.word = option.word; // Зөв хариултыг шалгахад хэрэгтэй
+      button.dataset.word = option.word;
       button.addEventListener("click", () => {
         choicesEl.querySelectorAll("button").forEach(btn => {
           btn.disabled = true;
@@ -162,6 +175,7 @@ function setMode(mode) {
   currentMode = mode;
   mode1Btn.classList.toggle("active", mode === "mode1");
   mode2Btn.classList.toggle("active", mode === "mode2");
+  wordHistory = []; // Форматыг өөрчлөхдөө түүхийг шинэчлэх
   displayQuestion();
 }
 
