@@ -1,78 +1,175 @@
 body {
-  font-family: "Hiragino Kaku Gothic Pro", "Meiryo", sans-serif;
-  text-align: center;
-  background: #f0f4f8;
-  padding: 40px;
-  margin: 0;
+    font-family: "Hiragino Kaku Gothic Pro", "Meiryo", Arial, sans-serif;
+    text-align: center;
+    background: #f0f4f8;
+    padding: 20px;
+    margin: 0;
+    color: #333;
 }
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
 .mode-selection {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
+
 .mode-btn {
-  padding: 10px 20px;
-  font-size: 1em;
-  border: none;
-  border-radius: 8px;
-  background: #e0e0e0;
-  cursor: pointer;
-  margin: 0 10px;
-  transition: background 0.3s ease;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
+
 .mode-btn:hover {
-  background: #d0d0d0;
+    background: #d0d0d0;
 }
+
 .mode-btn.active {
-  background: #4a90e2;
-  color: white;
+    background: #4a90e2;
+    color: white;
 }
+
+.input-types {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.input-type {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
 .card {
-  display: inline-block;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-  min-width: 300px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
-.card h1 {
-  font-size: 2.5em;
-  margin: 0;
-  color: #333;
+
+.word {
+    font-size: 2.5em;
+    margin: 10px 0;
 }
-.hidden {
-  display: none;
+
+.romaji {
+    font-size: 1.2em;
+    color: #777;
+    margin-bottom: 10px;
 }
-#score {
-  font-size: 1.3em;
-  color: #333;
-  margin-top: 15px;
+
+.score-timer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
 }
+
+.score, .timer {
+    font-size: 1.3em;
+    color: #333;
+}
+
 .choices {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  max-width: 400px;
-  margin: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
 }
-button {
-  padding: 12px 20px;
-  font-size: 1.1em;
-  border: none;
-  border-radius: 8px;
-  background: #e0e0e0;
-  cursor: pointer;
-  transition: background 0.3s ease;
+
+.choice-btn {
+    padding: 12px 20px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    background: #e0e0e0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
-button:hover {
-  background: #d0d0d0;
+
+.choice-btn:hover {
+    background: #d0d0d0;
 }
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+
+.choice-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
+
 .correct {
-  background-color: #a5d6a7 !important;
+    background-color: #a5d6a7 !important;
 }
+
 .wrong {
-  background-color: #ef9a9a !important;
+    background-color: #ef9a9a !important;
+}
+
+.dictionary {
+    margin-top: 30px;
+    text-align: left;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dictionary h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.dictionary-toggle {
+    background: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.dictionary-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.dictionary-item {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.japanese {
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .choices {
+        grid-template-columns: 1fr;
+    }
+
+    .dictionary-list {
+        grid-template-columns: 1fr;
+    }
 }
