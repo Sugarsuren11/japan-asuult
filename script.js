@@ -1,4 +1,3 @@
-// Кана хөрвүүлэгч
 const hiraganaToKatakana = {
     'あ': 'ア', 'い': 'イ', 'う': 'ウ', 'え': 'エ', 'お': 'オ',
     'か': 'カ', 'き': 'キ', 'く': 'ク', 'け': 'ケ', 'こ': 'コ',
@@ -29,30 +28,31 @@ const hiraganaToKatakana = {
     '（': '（', '）': '）', '～': '～', ' ': ' '
 };
 
-// HTML элементүүд
 const wordEl = document.getElementById("word");
 const romajiEl = document.getElementById("romaji");
 const choicesEl = document.getElementById("choices");
+const textInputSectionEl = document.getElementById("textInputSection");
+const textAnswerEl = document.getElementById("textAnswer");
+const submitAnswerBtn = document.getElementById("submitAnswer");
 const scoreEl = document.getElementById("score");
 const timerEl = document.getElementById("timer");
 const mode1Btn = document.getElementById("mode1");
 const mode2Btn = document.getElementById("mode2");
+const mode3Btn = document.getElementById("mode3");
 const dictionaryToggleBtn = document.getElementById("dictionaryToggle");
 const dictionaryEl = document.getElementById("dictionary");
 const dictionaryListEl = document.getElementById("dictionaryList");
 const inputTypeRadios = document.querySelectorAll('input[name="inputType"]');
 
-// Тоглоомын төлөв
 let vocab = [];
 let score = 0;
-let currentMode = "mode1"; // "mode1": Япон → Монгол, "mode2": Монгол → Япон
-let currentInputType = "hiragana"; // "hiragana", "katakana", "romaji"
+let currentMode = "mode1"; // "mode1": Япон → Монгол, "mode2": Монгол → Япон, "mode3": Бичгээр хариулах
+let currentInputType = "hiragana";
 let wordHistory = [];
 let seconds = 0;
 let timerInterval;
 let currentWord = null;
 
-// Оноо шинэчлэх
 function updateScore(correct) {
     if (correct) {
         score += 1;
@@ -62,7 +62,6 @@ function updateScore(correct) {
     scoreEl.textContent = `Оноо: ${score}`;
 }
 
-// Санамсаргүй үг сонгох
 function getRandomWord() {
     let availableWords = vocab.filter(word => {
         const wordCount = wordHistory.filter(w => w.word === word.word).length;
@@ -79,7 +78,6 @@ function getRandomWord() {
     return randomWord;
 }
 
-// Хирагана → Катакана хөрвүүлэх
 function convertHiraganaToKatakana(text) {
     let result = '';
     let i = 0;
@@ -102,7 +100,6 @@ function convertHiraganaToKatakana(text) {
     return result;
 }
 
-// Текстийг оролтын төрлөөр хөрвүүлэх
 function convertText(text, type) {
     text = text.replace(/\([^)]*\)/g, '');
     
@@ -116,11 +113,13 @@ function convertText(text, type) {
     return text;
 }
 
-// Асуулт харуулах
 function displayQuestion() {
     currentWord = getRandomWord();
     
     if (currentMode === "mode1") {
+        choicesEl.classList.remove("hidden");
+        textInputSectionEl.classList.add("hidden");
+        
         let displayText = currentWord.word;
         displayText = convertText(displayText, currentInputType);
         wordEl.textContent = displayText;
@@ -144,11 +143,14 @@ function displayQuestion() {
             button.textContent = answer;
             button.className = "choice-btn";
             button.addEventListener("click", () => {
-                handleAnswer(button, answer, correctAnswer);
+                handleChoiceAnswer(button, answer, correctAnswer);
             });
             choicesEl.appendChild(button);
         });
-    } else {
+    } else if (currentMode === "mode2") {
+        choicesEl.classList.remove("hidden");
+        textInputSectionEl.classList.add("hidden");
+        
         wordEl.textContent = currentWord.meaning;
         romajiEl.textContent = "";
         
@@ -173,15 +175,28 @@ function displayQuestion() {
             button.textContent = displayText;
             button.className = "choice-btn";
             button.addEventListener("click", () => {
-                handleAnswer(button, answer, correctAnswer);
+                handleChoiceAnswer(button, answer, correctAnswer);
             });
             choicesEl.appendChild(button);
         });
+    } else if (currentMode === "mode3") {
+        choicesEl.classList.add("hidden");
+        textInputSectionEl.classList.remove("hidden");
+        
+        // Mode 3 нь Япон → Монгол горимтой адилхан асуулт тавина, гэхдээ бичгээр хариулна
+        let displayText = currentWord.word;
+        displayText = convertText(displayText, currentInputType);
+        wordEl.textContent = displayText;
+        romajiEl.textContent = currentInputType === "romaji" ? "" : currentWord.romaji;
+        
+        textAnswerEl.value = "";
+        textAnswerEl.classList.remove("correct-input", "wrong-input");
+        textAnswerEl.disabled = false;
+        submitAnswerBtn.disabled = false;
     }
 }
 
-// Хариултыг шалгах
-function handleAnswer(button, answer, correctAnswer) {
+function handleChoiceAnswer(button, answer, correctAnswer) {
     const buttons = choicesEl.querySelectorAll("button");
     buttons.forEach(btn => btn.disabled = true);
     
@@ -215,7 +230,30 @@ function handleAnswer(button, answer, correctAnswer) {
     }
 }
 
-// Цаг шинэчлэх
+function handleTextAnswer() {
+    const userAnswer = textAnswerEl.value.trim();
+    const correctAnswer = currentWord.meaning; // Япон → Монгол горим тул Монгол утгыг шалгана
+    
+    textAnswerEl.disabled = true;
+    submitAnswerBtn.disabled = true;
+    
+    if (userAnswer === correctAnswer) {
+        textAnswerEl.classList.add("correct-input");
+        updateScore(true);
+        setTimeout(() => {
+            displayQuestion();
+        }, 1000);
+    } else {
+        textAnswerEl.classList.add("wrong-input");
+        updateScore(false);
+        setTimeout(() => {
+            textAnswerEl.disabled = false;
+            submitAnswerBtn.disabled = false;
+            textAnswerEl.classList.remove("correct-input", "wrong-input");
+        }, 2000);
+    }
+}
+
 function updateTimer() {
     seconds++;
     const minutes = Math.floor(seconds / 60);
@@ -223,7 +261,6 @@ function updateTimer() {
     timerEl.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
-// Цаг эхлүүлэх
 function startTimer() {
     clearInterval(timerInterval);
     seconds = 0;
@@ -231,7 +268,6 @@ function startTimer() {
     timerInterval = setInterval(updateTimer, 1000);
 }
 
-// Үгийн сан харуулах
 function displayDictionary() {
     dictionaryListEl.innerHTML = "";
     
@@ -251,24 +287,41 @@ function displayDictionary() {
     });
 }
 
-// Горимын товчлууруудын үйлдэл
+function updateModeButtons() {
+    mode1Btn.classList.remove("active:bg-blue-600", "active:text-white");
+    mode2Btn.classList.remove("active:bg-blue-600", "active:text-white");
+    mode3Btn.classList.remove("active:bg-blue-600", "active:text-white");
+    
+    if (currentMode === "mode1") {
+        mode1Btn.classList.add("active:bg-blue-600", "active:text-white");
+    } else if (currentMode === "mode2") {
+        mode2Btn.classList.add("active:bg-blue-600", "active:text-white");
+    } else if (currentMode === "mode3") {
+        mode3Btn.classList.add("active:bg-blue-600", "active:text-white");
+    }
+}
+
 mode1Btn.addEventListener("click", () => {
     currentMode = "mode1";
-    mode1Btn.classList.add("active");
-    mode2Btn.classList.remove("active");
+    updateModeButtons();
     startTimer();
     displayQuestion();
 });
 
 mode2Btn.addEventListener("click", () => {
     currentMode = "mode2";
-    mode2Btn.classList.add("active");
-    mode1Btn.classList.remove("active");
+    updateModeButtons();
     startTimer();
     displayQuestion();
 });
 
-// Оролтын төрөл өөрчлөх
+mode3Btn.addEventListener("click", () => {
+    currentMode = "mode3";
+    updateModeButtons();
+    startTimer();
+    displayQuestion();
+});
+
 inputTypeRadios.forEach(radio => {
     radio.addEventListener("change", function() {
         currentInputType = this.value;
@@ -277,7 +330,6 @@ inputTypeRadios.forEach(radio => {
     });
 });
 
-// Үгийн сан харуулах/нуух
 dictionaryToggleBtn.addEventListener("click", () => {
     if (dictionaryEl.style.display === "none") {
         dictionaryEl.style.display = "block";
@@ -289,7 +341,8 @@ dictionaryToggleBtn.addEventListener("click", () => {
     }
 });
 
-// Үгийн санг ачаалах ба тоглоомыг эхлүүлэх
+submitAnswerBtn.addEventListener("click", handleTextAnswer);
+
 fetch('vocab.json')
     .then(response => {
         if (!response.ok) {
