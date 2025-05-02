@@ -1,54 +1,3 @@
-// Үгийн сан
-const vocab = [
-    { word: "これ", romaji: "kore", meaning: "энэ" },
-    { word: "それ", romaji: "sore", meaning: "тэр" },
-    { word: "あれ", romaji: "are", meaning: "наадах" },
-    { word: "この～", romaji: "kono", meaning: "энэ + нэр үг" },
-    { word: "その～", romaji: "sono", meaning: "тэр + нэр үг" },
-    { word: "あの～", romaji: "ano", meaning: "наадах + нэр үг" },
-    { word: "ほん (本)", romaji: "hon", meaning: "ном" },
-    { word: "じしょ (辞書)", romaji: "jisho", meaning: "толь бичиг" },
-    { word: "ざっし (雑誌)", romaji: "zasshi", meaning: "сэтгүүл" },
-    { word: "しんぶん (新聞)", romaji: "shinbun", meaning: "сонин" },
-    { word: "ノート", romaji: "nooto", meaning: "дэвтэр" },
-    { word: "てちょう (手帳)", romaji: "techou", meaning: "тэмдэглэлийн дэвтэр" },
-    { word: "めいし (名刺)", romaji: "meishi", meaning: "нэрийн хуудас" },
-    { word: "カード", romaji: "kaado", meaning: "карт" },
-    { word: "テレホンカード", romaji: "terehon kaado", meaning: "утасны карт" },
-    { word: "えんぴつ (鉛筆)", romaji: "enpitsu", meaning: "харандаа" },
-    { word: "ボールペン", romaji: "boorupen", meaning: "балан үзэг" },
-    { word: "シャープペンシル", romaji: "shaapu penshiru", meaning: "0.5 харандаа" },
-    { word: "かぎ", romaji: "kagi", meaning: "түлхүүр" },
-    { word: "とけい (時計)", romaji: "tokei", meaning: "цаг" },
-    { word: "かさ (傘)", romaji: "kasa", meaning: "шүхэр" },
-    { word: "かばん", romaji: "kaban", meaning: "цүнх" },
-    { word: "（カセット）テープ", romaji: "kasetto teepu", meaning: "кассет" },
-    { word: "テープレコーダー", romaji: "teepu rekoodaa", meaning: "магнитофон" },
-    { word: "テレビ", romaji: "terebi", meaning: "телевизор" },
-    { word: "ラジオ", romaji: "rajio", meaning: "радио" },
-    { word: "カメラ", romaji: "kamera", meaning: "камер" },
-    { word: "コンピューター", romaji: "konpyuutaa", meaning: "компьютер" },
-    { word: "じどうしゃ (自動車)", romaji: "jidousha", meaning: "машин" },
-    { word: "つくえ", romaji: "tsukue", meaning: "ширээ" },
-    { word: "いす", romaji: "isu", meaning: "сандал" },
-    { word: "チョコレート", romaji: "chokoreeto", meaning: "шоколад" },
-    { word: "コーヒー", romaji: "koohii", meaning: "кофе" },
-    { word: "えいご (英語)", romaji: "eigo", meaning: "англи хэл" },
-    { word: "にほんご (日本語)", romaji: "nihongo", meaning: "япон хэл" },
-    { word: "～ご (～語)", romaji: "～go", meaning: "~ хэл" },
-    { word: "なん (何)", romaji: "nan", meaning: "юу, хэд, ямар" },
-    { word: "そう", romaji: "sou", meaning: "тийм" },
-    { word: "ちがいます", romaji: "chigaimasu", meaning: "биш, андуурсан байна" },
-    { word: "そうですか", romaji: "sou desu ka", meaning: "тийм үү?" },
-    { word: "あのう", romaji: "anou", meaning: "ээ…" },
-    { word: "ほんのきもちです", romaji: "hon no kimochi desu", meaning: "жаахан юм" },
-    { word: "どうぞ", romaji: "douzo", meaning: "тэг тэг, май" },
-    { word: "どうも", romaji: "doumo", meaning: "баярлалаа" },
-    { word: "これからおせわになります", romaji: "kore kara osewa ni narimasu", meaning: "дэмжлэгээ хүсье" },
-    { word: "（どうも）ありがとう ございます", romaji: "doumo arigatou gozaimasu", meaning: "маш их баярлалаа" },
-    { word: "こちらこそよろしく", romaji: "kochira koso yoroshiku", meaning: "би ч гэсэн танилцсандаа таатай байна" }
-];
-
 // Кана хөрвүүлэгч
 const hiraganaToKatakana = {
     'あ': 'ア', 'い': 'イ', 'う': 'ウ', 'え': 'エ', 'お': 'オ',
@@ -94,6 +43,7 @@ const dictionaryListEl = document.getElementById("dictionaryList");
 const inputTypeRadios = document.querySelectorAll('input[name="inputType"]');
 
 // Тоглоомын төлөв
+let vocab = [];
 let score = 0;
 let currentMode = "mode1"; // "mode1": Япон → Монгол, "mode2": Монгол → Япон
 let currentInputType = "hiragana"; // "hiragana", "katakana", "romaji"
@@ -135,7 +85,6 @@ function convertHiraganaToKatakana(text) {
     let i = 0;
     
     while (i < text.length) {
-        // Эхлээд 2 тэмдэгт шалгах
         if (i < text.length - 1) {
             const twoChars = text.substr(i, 2);
             if (hiraganaToKatakana[twoChars]) {
@@ -145,7 +94,6 @@ function convertHiraganaToKatakana(text) {
             }
         }
         
-        // Нэг тэмдэгт шалгах
         const char = text[i];
         result += hiraganaToKatakana[char] || char;
         i++;
@@ -156,18 +104,16 @@ function convertHiraganaToKatakana(text) {
 
 // Текстийг оролтын төрлөөр хөрвүүлэх
 function convertText(text, type) {
-    // Ханз (кандзи)-г арилгах
     text = text.replace(/\([^)]*\)/g, '');
     
     if (type === "katakana") {
         return convertHiraganaToKatakana(text);
     } else if (type === "romaji") {
-        // Одоогийн үгийн ромажиг олох
         const wordObj = vocab.find(w => w.word === text || w.word.includes(text));
         return wordObj ? wordObj.romaji : text;
     }
     
-    return text; // Хирагана бол шууд буцаана
+    return text;
 }
 
 // Асуулт харуулах
@@ -175,21 +121,15 @@ function displayQuestion() {
     currentWord = getRandomWord();
     
     if (currentMode === "mode1") {
-        // Горим 1: Японы үгийг харуулж, Монгол утгыг сонгуулна
         let displayText = currentWord.word;
-        
-        // Хирагана, Катакана эсвэл Ромажи руу хөрвүүлэх
         displayText = convertText(displayText, currentInputType);
-        
         wordEl.textContent = displayText;
         romajiEl.textContent = currentInputType === "romaji" ? "" : currentWord.romaji;
         
-        // Сонголтууд: Монгол утгууд
         choicesEl.innerHTML = "";
         const correctAnswer = currentWord.meaning;
         const allAnswers = [correctAnswer];
         
-        // 3 буруу Монгол утга сонгох
         while (allAnswers.length < 4) {
             const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
             if (!allAnswers.includes(randomWord.meaning)) {
@@ -197,10 +137,8 @@ function displayQuestion() {
             }
         }
         
-        // Сонголтуудыг холино
         allAnswers.sort(() => Math.random() - 0.5);
         
-        // Сонголтуудыг HTML-д нэмнэ
         allAnswers.forEach(answer => {
             const button = document.createElement("button");
             button.textContent = answer;
@@ -211,20 +149,15 @@ function displayQuestion() {
             choicesEl.appendChild(button);
         });
     } else {
-        // Горим 2: Монгол утгыг харуулж, Японы үгийг сонгуулна
         wordEl.textContent = currentWord.meaning;
         romajiEl.textContent = "";
         
-        // Сонголтууд: Японы үгс
         choicesEl.innerHTML = "";
         let correctAnswer = currentWord.word;
-        
-        // Хирагана, Катакана эсвэл Ромажи руу хөрвүүлэх
         const correctDisplay = convertText(correctAnswer, currentInputType);
         
         const allAnswers = [correctAnswer];
         
-        // 3 буруу Японы үг сонгох
         while (allAnswers.length < 4) {
             const randomWord = vocab[Math.floor(Math.random() * vocab.length)];
             if (!allAnswers.includes(randomWord.word)) {
@@ -232,10 +165,8 @@ function displayQuestion() {
             }
         }
         
-        // Сонголтуудыг холино
         allAnswers.sort(() => Math.random() - 0.5);
         
-        // Сонголтуудыг HTML-д нэмнэ
         allAnswers.forEach(answer => {
             const button = document.createElement("button");
             const displayText = convertText(answer, currentInputType);
@@ -251,11 +182,9 @@ function displayQuestion() {
 
 // Хариултыг шалгах
 function handleAnswer(button, answer, correctAnswer) {
-    // Бүх товчлуурыг идэвхгүй болгоно
     const buttons = choicesEl.querySelectorAll("button");
     buttons.forEach(btn => btn.disabled = true);
     
-    // Зөв эсвэл бурууг харуулах
     if (answer === correctAnswer) {
         button.classList.add("correct");
         updateScore(true);
@@ -265,12 +194,11 @@ function handleAnswer(button, answer, correctAnswer) {
                 btn.classList.remove("correct", "wrong");
             });
             displayQuestion();
-        }, 1000); // 1 секундын дараа дараагийн асуулт
+        }, 1000);
     } else {
         button.classList.add("wrong");
         updateScore(false);
         
-        // Зөв хариултыг тодруулах
         buttons.forEach(btn => {
             if (btn.textContent === convertText(correctAnswer, currentInputType) || 
                 (currentMode === "mode1" && btn.textContent === correctAnswer)) {
@@ -283,7 +211,7 @@ function handleAnswer(button, answer, correctAnswer) {
                 btn.disabled = false;
                 btn.classList.remove("correct", "wrong");
             });
-        }, 2000); // 2 секундын дараа товчлуурыг буцааж идэвхжүүлнэ
+        }, 2000);
     }
 }
 
@@ -361,6 +289,20 @@ dictionaryToggleBtn.addEventListener("click", () => {
     }
 });
 
-// Тоглоомыг эхлүүлэх
-startTimer();
-displayQuestion();
+// Үгийн санг ачаалах ба тоглоомыг эхлүүлэх
+fetch('vocab.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Үгийн санг ачаалж чадсангүй');
+        }
+        return response.json();
+    })
+    .then(data => {
+        vocab = data;
+        startTimer();
+        displayQuestion();
+    })
+    .catch(error => {
+        console.error('Алдаа:', error);
+        wordEl.textContent = 'Үгийн санг ачаалж чадсангүй. Дахин оролдоно уу.';
+    });
