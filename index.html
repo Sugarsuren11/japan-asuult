@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="mn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Япон-Монгол үг тоглоом</title>
+  <title>Япон-Монгол Тест</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Горим сонгоно уу:</h2>
-  <select id="mode">
-    <option value="ja-to-mn">Япон → Монгол</option>
-    <option value="mn-to-ja">Монгол → Япон</option>
-  </select>
+  <h1>Япон-Монгол Тест</h1>
 
-  <label for="answerMode">Хариу хэлбэр:</label>
-  <select id="answerMode">
-    <option value="romaji">Romaji</option>
-    <option value="hiragana">Hiragana</option>
-    <option value="katakana">Katakana</option>
-  </select>
-
-  <button onclick="startGame()">Эхлэх</button>
-
-  <div class="card" style="display:none;" id="card">
-    <h1 id="question">...</h1>
-    <p id="subtext">...</p>
+  <div id="startMenu" class="card">
+    <p>Асуулт аль хэл дээр байх вэ?</p>
+    <button onclick="startGame('jp')">Япон хэл дээр</button>
+    <button onclick="startGame('mn')">Монгол хэл дээр</button>
   </div>
-  <div class="choices" id="choices"></div>
+
+  <div id="gameArea" class="card">
+    <div id="score">Оноо: 0</div>
+    <div class="question" id="questionText">Асуулт...</div>
+    <div class="options" id="options"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
