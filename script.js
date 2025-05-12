@@ -8,6 +8,7 @@ let currentQuestion = null;
 let timerTimeout;
 
 const questionText = document.getElementById("questionText");
+const answerInput = document.getElementById("answerInput");
 const optionsDiv = document.getElementById("options");
 const scoreDisplay = document.getElementById("score");
 const startMenu = document.getElementById("startMenu");
@@ -16,7 +17,7 @@ const feedbackEl = document.getElementById("feedback");
 const progressBar = document.getElementById("progressBar");
 
 // HTML элементүүд байгаа эсэхийг шалгах
-if (!questionText || !optionsDiv || !scoreDisplay || !startMenu || !gameArea || !feedbackEl || !progressBar) {
+if (!questionText || !answerInput || !optionsDiv || !scoreDisplay || !startMenu || !gameArea || !feedbackEl || !progressBar) {
   console.error("HTML элементүүд олдсонгүй. ID-уудыг шалгана уу.");
 }
 
@@ -44,15 +45,16 @@ async function startGame(selectedLang) {
   usedIndexes.clear();
   scoreDisplay.innerText = `Оноо: ${score}`;
   feedbackEl.innerText = "";
+  answerInput.value = "";
   startMenu.style.display = "none";
   gameArea.style.display = "block";
   newQuestion();
 }
 
 function startVisualTimer() {
-  progressBar.style.animation = "none";
+  progressBar.classList.remove("shrink");
   void progressBar.offsetWidth;
-  progressBar.style.animation = "shrink 60s linear forwards";
+  progressBar.classList.add("shrink");
 
   clearTimeout(timerTimeout);
   timerTimeout = setTimeout(() => {
@@ -60,61 +62,24 @@ function startVisualTimer() {
   }, 60000);
 }
 
-function getNeighborChoices(index, correctAnswer, isMongolian) {
-  const choices = [correctAnswer];
-  const availableNeighbors = [];
-
-  // Дээрх болон доорх индексүүдийг авах (хязгаарыг шалгах)
-  const neighborIndexes = [
-    index - 2, index - 1, index + 1, index + 2
-  ].filter(i => i >= 0 && i < words.length && i !== index);
-
-  // Хөрш зэргэлдээ элементүүдийг авах
-  neighborIndexes.forEach(i => {
-    const value = isMongolian ? words[i].mongolian : words[i].kana;
-    if (!choices.includes(value)) {
-      availableNeighbors.push(value);
-    }
-  });
-
-  // 3 буруу сонголтыг санамсаргүйгээр сонгох
-  while (choices.length < 4 && availableNeighbors.length > 0) {
-    const randomIndex = Math.floor(Math.random() * availableNeighbors.length);
-    choices.push(availableNeighbors.splice(randomIndex, 1)[0]);
-  }
-
-  // Хэрвээ хангалттай хөрш байхгүй бол бусад үгнүүдээс нөхнө
-  while (choices.length < 4) {
-    const randomIndex = Math.floor(Math.random() * words.length);
-    const value = isMongolian ? words[randomIndex].mongolian : words[randomIndex].kana;
-    if (!choices.includes(value)) {
-      choices.push(value);
-    }
-  }
-
-  // Сонголтуудыг санамсаргүй холино
-  shuffle(choices);
-  return choices;
-}
-
 function newQuestion() {
   if (!words.length) {
     questionText.innerText = "Өгөгдөл хоосон байна!";
-    optionsDiv.innerHTML = "";
     feedbackEl.innerText = "";
+    answerInput.value = "";
     return;
   }
 
   if (usedIndexes.size >= words.length) {
     questionText.innerText = "Тоглоом дууслаа! 🎉";
-    optionsDiv.innerHTML = "";
     feedbackEl.innerText = `Таны оноо: ${score}`;
+    answerInput.value = "";
     return;
   }
 
-  optionsDiv.innerHTML = "";
   attempts = 0;
   feedbackEl.innerText = "";
+  answerInput.value = "";
 
   let index;
   do {
@@ -126,36 +91,27 @@ function newQuestion() {
   const isJapaneseToMongolian = lang === "jp";
   currentQuestion.question = isJapaneseToMongolian ? currentQuestion.kana : currentQuestion.mongolian;
   currentQuestion.answer = isJapaneseToMongolian ? currentQuestion.mongolian : currentQuestion.kana;
-  currentQuestion.options = getNeighborChoices(index, currentQuestion.answer, isJapaneseToMongolian);
 
   questionText.innerText = currentQuestion.question;
-  showChoices(currentQuestion.options);
   startVisualTimer();
 }
 
-function showChoices(options) {
-  optionsDiv.innerHTML = "";
-  options.forEach((choice, i) => {
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-    btn.onclick = () => checkAnswer(i);
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function checkAnswer(selected) {
-  const correct = currentQuestion.options[selected] === currentQuestion.answer;
+function checkAnswer() {
+  const userAnswer = answerInput.value.trim();
+  const correct = userAnswer === currentQuestion.answer;
   clearTimeout(timerTimeout);
-  progressBar.style.animation = "none";
+  progressBar.classList.remove("shrink");
 
   if (correct) {
     score++;
     scoreDisplay.innerText = `Оноо: ${score}`;
     feedbackEl.innerText = "✅ Зөв!";
+    answerInput.value = "";
     setTimeout(newQuestion, 1000);
   } else {
     attempts++;
     feedbackEl.innerText = `❌ Буруу! (${attempts}/${maxAttempts} оролдлого)`;
+    answerInput.value = "";
     if (attempts >= maxAttempts) {
       showAnswer();
     } else {
@@ -166,8 +122,9 @@ function checkAnswer(selected) {
 
 function showAnswer() {
   clearTimeout(timerTimeout);
-  progressBar.style.animation = "none";
+  progressBar.classList.remove("shrink");
   feedbackEl.innerText = `❌ ${attempts >= maxAttempts ? "Оролдлого дууслаа" : "Хугацаа дууслаа"}! Зөв хариулт: ${currentQuestion.answer}`;
+  answerInput.value = "";
   setTimeout(() => {
     if (confirm("Дахин эхлэх үү?")) {
       score = 0;
@@ -175,18 +132,12 @@ function showAnswer() {
       usedIndexes.clear();
       scoreDisplay.innerText = `Оноо: ${score}`;
       feedbackEl.innerText = "";
+      answerInput.value = "";
       newQuestion();
     } else {
       questionText.innerText = "Тоглоом дууссан 🎌";
-      optionsDiv.innerHTML = "";
       feedbackEl.innerText = `Таны оноо: ${score}`;
+      answerInput.value = "";
     }
   }, 1000);
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
 }
