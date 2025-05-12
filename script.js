@@ -9,13 +9,29 @@ const scoreDisplay = document.getElementById("score");
 const startMenu = document.getElementById("startMenu");
 const gameArea = document.getElementById("gameArea");
 
-fetch("vocab.json")
-  .then(res => res.json())
-  .then(data => {
-    words = data;
-  });
+// HTML элементүүд байгаа эсэхийг шалгах
+if (!questionText || !optionsDiv || !scoreDisplay || !startMenu || !gameArea) {
+  console.error("HTML элементүүд олдсонгүй. ID-уудыг шалгана уу.");
+}
 
-function startGame(selectedLang) {
+// vocab.json файлыг ачаалах
+async function loadVocab() {
+  try {
+    const res = await fetch("vocab.json");
+    if (!res.ok) throw new Error("vocab.json файлыг ачаалж чадсангүй.");
+    words = await res.json();
+    console.log("Ачаалсан өгөгдөл:", words); // Дибаг хийх
+    if (!words.length) throw new Error("vocab.json хоосон байна.");
+  } catch (error) {
+    console.error("Алдаа:", error);
+    alert("Өгөгдөл ачааллахад алдаа гарлаа. vocab.json файлыг шалгана уу.");
+  }
+}
+
+async function startGame(selectedLang) {
+  await loadVocab(); // vocab.json ачаалж дуусахыг хүлээх
+  if (!words.length) return; // Хэрвээ өгөгдөл байхгүй бол зогсоох
+
   lang = selectedLang;
   score = 0;
   usedIndexes.clear();
@@ -26,6 +42,12 @@ function startGame(selectedLang) {
 }
 
 function newQuestion() {
+  if (!words.length) {
+    questionText.innerText = "Өгөгдөл хоосон байна!";
+    optionsDiv.innerHTML = "";
+    return;
+  }
+
   if (usedIndexes.size >= words.length) {
     questionText.innerText = "Тоглоом дууслаа!";
     optionsDiv.innerHTML = "";
