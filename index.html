@@ -18,7 +18,12 @@
   <div id="gameArea" class="card">
     <div id="score">Оноо: 0</div>
     <div class="question" id="questionText">Асуулт...</div>
-    <div class="options" id="options"></div>
+    <div class="options" id="options">
+      <input type="text" id="answerInput" placeholder="Хариултаа бичнэ үү">
+      <button onclick="checkAnswer()">Илгээх</button>
+    </div>
+    <div id="feedback"></div>
+    <div id="progressBar"></div>
   </div>
 
   <script src="script.js"></script>
